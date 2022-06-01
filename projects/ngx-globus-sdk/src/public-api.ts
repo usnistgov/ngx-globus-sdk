@@ -3,5 +3,4 @@
  */
 
 export * from './lib/ngx-globus-sdk.service';
-export * from './lib/ngx-globus-sdk.component';
 export * from './lib/ngx-globus-sdk.module';
