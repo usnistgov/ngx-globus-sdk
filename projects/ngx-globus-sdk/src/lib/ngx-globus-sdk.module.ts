@@ -1,5 +1,6 @@
-import { NgModule } from '@angular/core';
-import { NgxGlobusSdkComponent } from './ngx-globus-sdk.component';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { Configuration } from './models/configuration.model';
+import { NgxGlobusSdkService } from './ngx-globus-sdk.service';
 
 
 
@@ -11,4 +12,13 @@ import { NgxGlobusSdkComponent } from './ngx-globus-sdk.component';
   exports: [
   ]
 })
-export class NgxGlobusSdkModule { }
+export class NgxGlobusSdkModule { 
+
+  static forRoot(configuration: Configuration): ModuleWithProviders<NgxGlobusSdkModule> {
+    return {
+      ngModule: NgxGlobusSdkModule,
+      providers: [NgxGlobusSdkService, { provide: 'config', useValue: configuration }]
+    };
+  }
+
+}
