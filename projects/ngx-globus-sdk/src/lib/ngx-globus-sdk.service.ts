@@ -4,7 +4,12 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { UserInfo } from './models/user.model';
 import { Observable } from 'rxjs';
+import { TransferDocument } from './models/transfer.model';
 
+const GLOBUS_TRANSFER_BASE_URL = "https://transfer.api.globus.org/v0.10";
+const SOURCE_ENDPOINT = "58c197dc-bc26-11ec-ad99-5ddcb36bd5b8";
+const SOURCE_PATH_BASE = "/C/Users/one1/Documents/tests/";
+const DESTINATION_PATH_BASE = "/tests/RandomFolder/";
 
 @Injectable({
   providedIn: 'root'
@@ -116,4 +121,114 @@ export class NgxGlobusSdkService {
 
   //  #### GLOBUS TRANSFER RELATED METHODS ####
 
+
+  getSubmissionId() {
+    let headers = new HttpHeaders(
+      {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.cookieService.get("transfer_access_token")}`,
+
+      });
+    let httpOptions = {
+      headers: headers
+    };
+    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/submission_id`, httpOptions);
+  }
+
+
+  getTaskList() {
+    let headers = new HttpHeaders(
+      {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.cookieService.get("transfer_access_token")}`,
+
+      });
+    let httpOptions = {
+      headers: headers
+    };
+    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/task_list?limit=50`, httpOptions);
+  }
+
+  transferFiles(transferDocument: TransferDocument) {
+
+    let headers = new HttpHeaders(
+      {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.cookieService.get("transfer_access_token")}`,
+
+      });
+    let httpOptions = {
+      headers: headers
+    };
+
+    let transferItems: any[] = [];
+
+    transferDocument.data.forEach(item => {
+      transferItems.push({
+        "DATA_TYPE": "transfer_item",
+        "source_path": SOURCE_PATH_BASE + item.sourcePath,
+        "destination_path": DESTINATION_PATH_BASE + item.destinationPath,
+        "recursive": item.recursive
+      });
+    });
+
+    let body = {
+      "DATA_TYPE": transferDocument.dataType,
+      "submission_id": transferDocument.submissionId,
+      "label": transferDocument.label,
+      "source_endpoint": SOURCE_ENDPOINT,
+      "destination_endpoint": transferDocument.destinationEndpoint,
+      "DATA": transferItems
+
+
+    }
+    return this.http.post<any>(`${GLOBUS_TRANSFER_BASE_URL}/transfer`, body, httpOptions);
+  }
+
+  getUserEndpoints(scope: string) {
+    let headers = new HttpHeaders(
+      {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.cookieService.get("transfer_access_token")}`,
+
+      });
+    const httpOptions = {
+      headers: headers
+    };
+    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/endpoint_search?filter_scope=${scope}`, httpOptions);
+  }
+
+  listEndpointContent(endpoint_id: string, endpoint_base: string) {
+    let httpParams = new HttpParams()
+      .append("path", endpoint_base);
+    let headers = new HttpHeaders(
+      {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.cookieService.get("transfer_access_token")}`,
+
+      });
+    const httpOptions = {
+      headers: headers
+    };
+    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/operation/endpoint/${endpoint_id}/ls?` + httpParams.toString(), httpOptions);
+  }
+
+
+  downloadFile(https_server: string, filename: string) {
+    let headers = new HttpHeaders(
+      {
+        'Authorization': `Bearer ${this.cookieService.get("https_access_token")}`,
+        'X-Requested-With': 'XMLHttpRequest'
+
+      });
+    const httpOptions = {
+      headers: headers
+    };
+    return this.http.get<any>(`${https_server}/${filename}?download`, httpOptions);
+  }
 }
