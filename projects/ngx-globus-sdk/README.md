@@ -9,13 +9,13 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Install from the command line:
 
-```
+```console
 npm install @usnistgov/ngx-globus-sdk@0.0.1
 ```
 
 Install via `package.json`:
 
-```
+```json
 "@usnistgov/ngx-globus-sdk": "0.0.1"
 ```
 
@@ -24,7 +24,7 @@ Install via `package.json`:
 
 Import the the `NgxGlobusSdkModule` module and add it to your `app.module.ts` imports:
 
-```
+```typescript
 import { NgxGlobusSdkModule } from 'ngx-globus-sdk';
 
 @NgModule({
@@ -46,7 +46,7 @@ export class AppModule {
 
 then import the `NgxGlobusSdkService` service, and inject it into a constructor:
 
-```
+```typescript
 import { NgxGlobusSdkService } from 'ngx-globus-sdk';
 
 ...
@@ -62,7 +62,7 @@ constructor(private globusService: NgxGlobusSdkService)
 
 The module expects the following configuration interface:
 
-```
+```typescript
 export interface Configuration {
     clientId: string;
     clientSecret: string;
