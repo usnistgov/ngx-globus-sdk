@@ -1,11 +1,26 @@
 {
-  "name": "ngx-globus-sdk",
+  "name": "@usnistgov/ngx-globus-sdk",
   "version": "0.0.1",
+  "description": "Angular module for interacting with Globus API.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/usnistgov/ngx-globus-sdk.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "homepage": "https://github.com/usnistgov/ngx-globus-sdk",
+  "keywords": [
+    "angular",
+    "globus",
+    "sdk"
+  ],
   "peerDependencies": {
     "@angular/common": "^13.3.0",
     "@angular/core": "^13.3.0"
   },
   "dependencies": {
+    "ngx-cookie-service": "^13.2.1",
     "tslib": "^2.3.0"
   }
 }
