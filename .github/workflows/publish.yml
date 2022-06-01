@@ -13,6 +13,13 @@ jobs:
         with:
           node-version: 16
           registry-url: 'https://npm.pkg.github.com'
+      - name: Install dependencies
+        run: npm install
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli > /dev/null
+      - name: Install library dependencies
+        working-directory: ./projects/ngx-globus-sdk
+        run: npm install
       - name: Build library
         run: ng build ngx-globus-sdk
       - name: Publish package on NPM
