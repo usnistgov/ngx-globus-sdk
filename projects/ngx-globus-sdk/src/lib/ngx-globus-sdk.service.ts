@@ -15,13 +15,7 @@ export class NgxGlobusSdkService {
 
   constructor(@Inject('config') private config: Configuration, private cookieService: CookieService, private http: HttpClient) { }
 
-  public healthCheck() {
-    console.log("Service NgxGlobusSdkService is available.");
-  }
-
-
   //  #### GLOBUS AUTHENTICATION RELATED METHODS ####
-
 
   /**
    * Get the authorization URL to which users should be sent.
@@ -58,7 +52,7 @@ export class NgxGlobusSdkService {
   /**
    * Logout the user by removing all the access tokens that are stored in the cookies.
    * 
-   * @param redirectUrl -- url to redirect the user to after logging out.
+   * @param redirectUrl url to redirect the user to after logging out.
    */
   logout(redirectUrl: string) {
     if (this.checkCredential('access_token'))
@@ -75,8 +69,8 @@ export class NgxGlobusSdkService {
   /**
    * Stores tokens using the CookieService, then redirects browser to the given URL.
    * 
-   * @param tokens -- tokens to store
-   * @param redirectUrl -- URL to redirect the browser to
+   * @param tokens tokens to store
+   * @param redirectUrl URL to redirect the browser to
    */
   saveTokens(tokens: any, redirectUrl: string) {
     let expireDate = new Date().getTime() + (1000 * tokens.expires_in);
@@ -88,8 +82,9 @@ export class NgxGlobusSdkService {
 
   /**
    * Exchange an authorization code for a token or tokens.
+   * Once the tokens are received, they will be stored in the cookies.
    * 
-   * @param code -- The code obtained by sending the user to the authorize URL.
+   * @param code the code obtained by sending the user to the authorize URL.
    */
   exchangeCodeForTokens(code: string) {
     let httpParams = new URLSearchParams();
@@ -103,7 +98,7 @@ export class NgxGlobusSdkService {
     let headers = new HttpHeaders({ 'Content-type': 'application/x-www-form-urlencoded; charset=utf-8' });
     this.http.post<any>(this.config.tokenUrl!, httpParams.toString(), { headers: headers })
       .subscribe(tokens => {
-        this.saveTokens(tokens, '');
+        this.saveTokens(tokens, this.config.redirectUrl);
       });
   }
 
@@ -111,7 +106,7 @@ export class NgxGlobusSdkService {
    * Call the Userinfo endpoint of Globus Auth.
    * Userinfo is specified as part of the OpenID Connect (OIDC) standard.
    * 
-   * @returns -- returns Observable of type UserInfo. The data returned will depend upon the set of OIDC-related scopes
+   * @returns returns Observable of type UserInfo. The data returned will depend upon the set of OIDC-related scopes
    * which were used to acquire the token being used for this call
    */
   getUserInfo(): Observable<UserInfo> {
@@ -135,7 +130,8 @@ export class NgxGlobusSdkService {
    * Get a submission ID. Submission IDs are required to submist a transfer.
    * It is different that the task ID.
    * 
-   * @returns an Observable of type any. Todo: change type to TaskListResponse. 
+   * @returns an Observable of type any. 
+   * @todo change type to TaskListResponse. 
    */
   getSubmissionId() {
     let headers = new HttpHeaders(
@@ -156,7 +152,8 @@ export class NgxGlobusSdkService {
   /**
    * Get the list of tasks that were submitted by the current authenticated user.
    * 
-   * @returns an Observable of type any. Todo: change type to TaskListResponse.  
+   * @returns an Observable of type any. 
+   * @todo change type to TaskListResponse.  
    */
   getTaskList() {
     let headers = new HttpHeaders(
@@ -175,8 +172,9 @@ export class NgxGlobusSdkService {
 
   /**
    * Start a transfer using the given transfer document
-   * @param transferDocument -- of type TransferDocument, the document containing information about the transfer.
-   * @returns an Observable of type any. Todo: change type to TransferResponse. 
+   * @param transferDocument of type TransferDocument, the document containing information about the transfer.
+   * @returns an Observable of type any. 
+   * @todo change type to TransferResponse. 
    */
   transferFiles(transferDocument: TransferDocument) {
 
@@ -218,8 +216,9 @@ export class NgxGlobusSdkService {
   /**
    * Get a list of the current authenticated user's endpoints.
    * 
-   * @param scope -- the scope filter specifies what type to endpoints to list. default is 'administered-by-me'
-   * @returns an Observable of type any. Todo: change type to Endpoint[].
+   * @param scope the scope filter specifies what type of endpoints to list. Default is 'administered-by-me'
+   * @returns an Observable of type any. 
+   * @todo change type to Endpoint[].
    */
   getUserEndpoints(scope: string) {
     let headers = new HttpHeaders(
@@ -238,9 +237,10 @@ export class NgxGlobusSdkService {
   /**
    * List the content of a given endpoint.
    * 
-   * @param endpoint_id -- the id of the endpoint
-   * @param endpoint_base -- a specific directory in the endpoint to fetch the content from.
-   * @returns an Observable of type any. Todo: change type to EndpointContent[].
+   * @param endpoint_id the id of the endpoint
+   * @param endpoint_base a specific directory in the endpoint to fetch the content from.
+   * @returns an Observable of type any. 
+   * @todo change type to EndpointContent[].
    */
   listEndpointContent(endpoint_id: string, endpoint_base: string) {
     let httpParams = new HttpParams()
@@ -261,12 +261,12 @@ export class NgxGlobusSdkService {
 
   /**
    * Download file using https.
-   * @experimental not working.
+   * @experimental not supported by Globus.
    * 
-   * @param https_server -- url of the http server containing the file.
-   * @param filename -- the file name
-   * @returns an Observable of type any. Todo: change type.
-   * 
+   * @param https_server url of the http server containing the file.
+   * @param filename the file name
+   * @returns an Observable of type any.
+   * @todo change type
    */
   downloadFile(https_server: string, filename: string) {
     let headers = new HttpHeaders(
