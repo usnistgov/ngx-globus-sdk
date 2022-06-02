@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { Configuration } from './models/configuration.model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
 import { UserInfo } from './models/user.model';
 import { Observable } from 'rxjs';
 import { TransferDocument } from './models/transfer.model';
 import { Settings } from './settings';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Injectable({
@@ -131,7 +131,12 @@ export class NgxGlobusSdkService {
 
   //  #### GLOBUS TRANSFER RELATED METHODS ####
 
-
+  /**
+   * Get a submission ID. Submission IDs are required to submist a transfer.
+   * It is different that the task ID.
+   * 
+   * @returns an Observable of type any. Todo: change type to TaskListResponse. 
+   */
   getSubmissionId() {
     let headers = new HttpHeaders(
       {
@@ -148,6 +153,11 @@ export class NgxGlobusSdkService {
   }
 
 
+  /**
+   * Get the list of tasks that were submitted by the current authenticated user.
+   * 
+   * @returns an Observable of type any. Todo: change type to TaskListResponse.  
+   */
   getTaskList() {
     let headers = new HttpHeaders(
       {
@@ -162,6 +172,12 @@ export class NgxGlobusSdkService {
     return this.http.get<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/task_list?limit=50`, httpOptions);
   }
 
+
+  /**
+   * Start a transfer using the given transfer document
+   * @param transferDocument -- of type TransferDocument, the document containing information about the transfer.
+   * @returns an Observable of type any. Todo: change type to TransferResponse. 
+   */
   transferFiles(transferDocument: TransferDocument) {
 
     let headers = new HttpHeaders(
@@ -199,6 +215,12 @@ export class NgxGlobusSdkService {
     return this.http.post<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/transfer`, body, httpOptions);
   }
 
+  /**
+   * Get a list of the current authenticated user's endpoints.
+   * 
+   * @param scope -- the scope filter specifies what type to endpoints to list. default is 'administered-by-me'
+   * @returns an Observable of type any. Todo: change type to Endpoint[].
+   */
   getUserEndpoints(scope: string) {
     let headers = new HttpHeaders(
       {
@@ -213,6 +235,13 @@ export class NgxGlobusSdkService {
     return this.http.get<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/endpoint_search?filter_scope=${scope}`, httpOptions);
   }
 
+  /**
+   * List the content of a given endpoint.
+   * 
+   * @param endpoint_id -- the id of the endpoint
+   * @param endpoint_base -- a specific directory in the endpoint to fetch the content from.
+   * @returns an Observable of type any. Todo: change type to EndpointContent[].
+   */
   listEndpointContent(endpoint_id: string, endpoint_base: string) {
     let httpParams = new HttpParams()
       .append("path", endpoint_base);
@@ -230,6 +259,15 @@ export class NgxGlobusSdkService {
   }
 
 
+  /**
+   * Download file using https.
+   * @experimental not working.
+   * 
+   * @param https_server -- url of the http server containing the file.
+   * @param filename -- the file name
+   * @returns an Observable of type any. Todo: change type.
+   * 
+   */
   downloadFile(https_server: string, filename: string) {
     let headers = new HttpHeaders(
       {
