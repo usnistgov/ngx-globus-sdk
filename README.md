@@ -4,7 +4,9 @@ NgxGlobusSdk is a library that enables you to easily work with [Globus](https://
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.5.
 
-## How to install
+## Usage
+
+### How to install
 
 Install from the command line:
 
@@ -18,7 +20,7 @@ Install via `package.json`:
 "@usnistgov/ngx-globus-sdk": "0.0.1"
 ```
 
-## How to use
+### How to use
 
 Import the the `NgxGlobusSdkModule` module and add it to your `app.module.ts` imports:
 
@@ -56,7 +58,7 @@ constructor(private globusService: NgxGlobusSdkService)
 }
 ```
 
-## Configuration
+### Configuration
 
 The module expects the following configuration interface:
 
@@ -72,11 +74,16 @@ export interface Configuration {
 ```
 
 where:
- - `clientId`, and `clientSecret` are provided by Globus when first registering and creating the app. **These should be hidden in env variables**.
- - `redirectUrl` is the url to redirect the user to after a login. This is specified by the app developer during app creation and registration. 
- - `scope` the scopes that the app has access to. Defaults to "openid profile email".
- - `authorizeUrl` is the OAuth2 authorization endpoint. Defaults to "https://auth.globus.org/v2/oauth2/authorize".
- - `tokenUrl` is the endpoint used to exchange an authorization code for an access token. Defaults to "https://auth.globus.org/v2/oauth2/token".
+
+* `clientId`, and `clientSecret` are provided by Globus when first registering and creating the app. **These should be hidden in env variables**.
+* `redirectUrl` is the url to redirect the user to after a login. This is specified by the app developer during app creation and registration.
+* `scope` the scopes that the app has access to. Defaults to "openid profile email".
+* `authorizeUrl` is the OAuth2 authorization endpoint. Defaults to "https://auth.globus.org/v2/oauth2/authorize".
+* `tokenUrl` is the endpoint used to exchange an authorization code for an access token. Defaults to "https://auth.globus.org/v2/oauth2/token".
+
+## Known issues
+
+* Download from Globus using https is not working. This might not be supported by Globus. To check.
 
 ## Contributing
 
