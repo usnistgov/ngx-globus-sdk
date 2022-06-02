@@ -5,11 +5,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { UserInfo } from './models/user.model';
 import { Observable } from 'rxjs';
 import { TransferDocument } from './models/transfer.model';
+import { Settings } from './settings';
 
-const GLOBUS_TRANSFER_BASE_URL = "https://transfer.api.globus.org/v0.10";
-const SOURCE_ENDPOINT = "58c197dc-bc26-11ec-ad99-5ddcb36bd5b8";
-const SOURCE_PATH_BASE = "/C/Users/one1/Documents/tests/";
-const DESTINATION_PATH_BASE = "/tests/RandomFolder/";
 
 @Injectable({
   providedIn: 'root'
@@ -42,14 +39,27 @@ export class NgxGlobusSdkService {
     return `${this.config.authorizeUrl}?${httpParams.toString()}`;
   }
 
+  /**
+   * Constructs the Authorize URL and redirects the user to it.
+   */
   login() {
     window.location.href = this.getAuthorizeUrl();
   }
+
+  /**
+   * Check whether a key exists in cookies.
+   * This relies on the {@link https://github.com/stevermeister/ngx-cookie-service}.
+   */
 
   checkCredential(name: string) {
     return this.cookieService.check(name);
   }
 
+  /**
+   * Logout the user by removing all the access tokens that are stored in the cookies.
+   * 
+   * @param redirectUrl -- url to redirect the user to after logging out.
+   */
   logout(redirectUrl: string) {
     if (this.checkCredential('access_token'))
       this.cookieService.delete("access_token");
@@ -63,7 +73,7 @@ export class NgxGlobusSdkService {
 
 
   /**
-   * Stores tokens using a CookieService, then redirects browser to the given URL.
+   * Stores tokens using the CookieService, then redirects browser to the given URL.
    * 
    * @param tokens -- tokens to store
    * @param redirectUrl -- URL to redirect the browser to
@@ -133,7 +143,8 @@ export class NgxGlobusSdkService {
     let httpOptions = {
       headers: headers
     };
-    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/submission_id`, httpOptions);
+
+    return this.http.get<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/submission_id`, httpOptions);
   }
 
 
@@ -148,7 +159,7 @@ export class NgxGlobusSdkService {
     let httpOptions = {
       headers: headers
     };
-    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/task_list?limit=50`, httpOptions);
+    return this.http.get<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/task_list?limit=50`, httpOptions);
   }
 
   transferFiles(transferDocument: TransferDocument) {
@@ -169,8 +180,8 @@ export class NgxGlobusSdkService {
     transferDocument.data.forEach(item => {
       transferItems.push({
         "DATA_TYPE": "transfer_item",
-        "source_path": SOURCE_PATH_BASE + item.sourcePath,
-        "destination_path": DESTINATION_PATH_BASE + item.destinationPath,
+        "source_path": Settings.DEFAULT_SOURCE_PATH_BASE + item.sourcePath,
+        "destination_path": Settings.DEFAULT_DESTINATION_PATH_BASE + item.destinationPath,
         "recursive": item.recursive
       });
     });
@@ -179,13 +190,13 @@ export class NgxGlobusSdkService {
       "DATA_TYPE": transferDocument.dataType,
       "submission_id": transferDocument.submissionId,
       "label": transferDocument.label,
-      "source_endpoint": SOURCE_ENDPOINT,
+      "source_endpoint": Settings.DEFAULT_SOURCE_ENDPOINT,
       "destination_endpoint": transferDocument.destinationEndpoint,
       "DATA": transferItems
 
 
     }
-    return this.http.post<any>(`${GLOBUS_TRANSFER_BASE_URL}/transfer`, body, httpOptions);
+    return this.http.post<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/transfer`, body, httpOptions);
   }
 
   getUserEndpoints(scope: string) {
@@ -199,7 +210,7 @@ export class NgxGlobusSdkService {
     const httpOptions = {
       headers: headers
     };
-    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/endpoint_search?filter_scope=${scope}`, httpOptions);
+    return this.http.get<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/endpoint_search?filter_scope=${scope}`, httpOptions);
   }
 
   listEndpointContent(endpoint_id: string, endpoint_base: string) {
@@ -215,7 +226,7 @@ export class NgxGlobusSdkService {
     const httpOptions = {
       headers: headers
     };
-    return this.http.get<any>(`${GLOBUS_TRANSFER_BASE_URL}/operation/endpoint/${endpoint_id}/ls?` + httpParams.toString(), httpOptions);
+    return this.http.get<any>(`${Settings.GLOBUS_TRANSFER_BASE_URL}/operation/endpoint/${endpoint_id}/ls?` + httpParams.toString(), httpOptions);
   }
 
 
